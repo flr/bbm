@@ -1,0 +1,40 @@
+useDynLib(bbm)
+
+import("methods")
+import("TMB")
+import("FLCore")
+importFrom("stats",
+  "na.omit",
+  "optim",
+  "rbeta")
+
+export(
+  "BBMpar",
+  "BBM.control", 
+  "BBMfit",
+  "BBM", 
+  "initsBBM",
+  "simBBM",
+  "periods",
+  "calcPop"
+)
+
+exportMethods(
+  "BBMpar",
+  "as.list",
+  "BBM.control", 
+  "BBMfit",
+  "stock",
+  "+", 
+  "residuals",
+  "AIC", 
+  "BIC",
+  "BBM",
+  "initsBBM"
+)
+
+exportClasses(
+  "BBMpar",
+  "BBM.control", 
+  "BBMfit" 
+)

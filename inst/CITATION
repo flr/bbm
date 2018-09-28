@@ -1,0 +1,15 @@
+citHeader("To cite the bbm model in a publication, please use:")
+
+citEntry(
+  entry="Article",
+  title="A two-stage biomass dynamic model for Bay of Biscay anchovy: a Bayesian approach",
+  author=personList(
+		person("Leire", "Ibaibarriaga"),
+    person("Carmen", "Fernández"),
+    person("Andrés", "Uriarte"),
+    person("Beatriz A.", "Roel")),
+  journal="ICES Journal of Marine Science",
+  year="2008",
+  volume="65",
+  pages="191-205",
+  textVersion="Leire Ibaibarriaga, Carmen Fernández, Andrés Uriarte, Beatriz A. Roel; A two-stage biomass dynamic model for Bay of Biscay anchovy: a Bayesian approach, ICES Journal of Marine Science, Volume 65, Issue 2, 1 March 2008, Pages 191–205, https://doi.org/10.1093/icesjms/fsn002")

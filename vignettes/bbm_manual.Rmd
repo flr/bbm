@@ -1,0 +1,344 @@
+---
+title: "Getting started with bbm package."
+author:
+  - "Leire Ibaibarriaga & Sonia Sanchez"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+tags: bbm FLR
+license: Creative Commons Attribution-ShareAlike 4.0 International
+---
+
+
+```{r, pkgs, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>", warning=FALSE)
+library(bbm)
+# LOAD other packages, including bbm, here
+```
+
+# Introduction
+
+**bbm** is an open-source R package that provides an FLR implementation of the two-stage biomass-based model for the Bay of Biscay anchovy [@bbm_Ibaibarriaga2008]. This model describes the stock dynamics in terms of biomass and separates the population into two stages: recruits and adults. Thus, it has lower data demands than fully age-structured models, while it is able to track the main dynamics of the population with more detail than biomass dynamic models. Besides the application to the Bay of Biscay anchovy, similar models have been applied to other case studies [@Giannoulaki2014; @Gras2014; @Roel2000; @Roel2009].
+
+The implementation available in this package estimates the model parameters by maximum likelihood through the TMB package [@tmb_Kristensen2016]. Additionally, the model has been generalised for an unlimited number of indices that can occur at different times of the year. The package uses the S4 classes and methods developed by the **FLR** project [<http://flr-project.org/R>; @FLR_KellMG2007].
+
+
+This document explains the basic use of the package **bbm**. The package and documentation are available at <http://flr-project.org/bbm>.
+
+
+# Installation
+
+The package requires the packages TMB and FLCore to be installed. TMB can be installed from CRAN using the ```install.packages()``` command, whereas FLCore can be installed from the FLR project repository as follows:
+
+```{r, echo=TRUE, eval=FALSE}
+  install.packages('TMB')
+  install.packages(c("FLCore"), repos="http://flr-project.org/R")
+```
+
+An stable version of **bbm** can be installed from the FLR repository (<http://flr-project.org/R>) with the command:
+
+```{r, echo=TRUE, eval=FALSE}
+  install.packages(c("bbm"), repos="http://flr-project.org/R")
+```
+
+A development version is available from XXX GitLab repository (<https://github.com/flr/bbm/>) XXX.
+
+```{r, devtools, echo=TRUE, eval=FALSE}
+	library(devtools)
+	install_github('flr/bbm')
+```
+
+Once installed, the package can be loaded using: 
+
+```{r, echo=TRUE, eval=TRUE}
+	library(bbm)
+```
+
+# Getting started: Bay of Biscay anchovy
+
+The package contains data and additional objects required to run the Bay of Biscay anchovy example from @bbm_Ibaibarriaga2008. They can be loaded using:
+
+```{r, echo=TRUE, eval=TRUE}
+  data(ane)
+```
+
+These data consist on four objects: ```catch.ane```, ```indices.ane```, ```control.ane``` and ```inits.ane```. The first object ```catch.ane``` is an FLQuant with the Bay of Biscay anchovy catch in tonnes from 1987 to 2006 for the two age classes (recruits and adults) and two periods (before and after the spring surveys in mid-May).
+Note that the catch of the second period of the last year were not available in @bbm_Ibaibarriaga2008. However, the model fitting function does not allow any missing value in the ```catch.ane``` object, and the NA's were replaced by very small non-negative values so that the total catch was 0.001 and the age 1 proportion was 0.5.  
+
+```{r, echo=TRUE, eval=TRUE}
+  class(catch.ane)
+  dim(catch.ane)
+  catch.ane
+```
+
+The catch in tonnes per age class and period can be plotted as:
+
+```{r, echo=TRUE, eval=TRUE, fig.width = 8, fig.height = 5}
+  plot(catch.ane, type="l")
+```
+
+Let define n as the number of years:
+
+```{r, echo=TRUE, eval=TRUE}
+  n <- dim(catch.ane)[2]  
+  n
+```
+
+Then, we can plot the proportion of the recruits (age 1) in the catch for each of the periods:  
+
+```{r, echo=TRUE, eval=TRUE, fig.show='hold'}
+  par(mfrow=c(1,2))
+  plot(catch.ane[1,,,1,,]/quantSums(catch.ane[,,,1,,]), type="o", ylab="Catch proportion", main="1st period") 
+  plot(catch.ane[1,1:(n-1),,2,,]/quantSums(catch.ane[,1:(n-1),,2,,]), type="o", ylab="Catch proportion", main="2nd period")
+```
+
+The object ```indices.ane``` is of class FLIndices, which is a list of two elements of the FLIndex class. Each of them contains the data of the two spring surveys: BIOMAN DEPM survey conducted by AZTI and the PELGAS acoustic survey conducted by IFREMER. The index slot of each FLIndex object contains the biomass estimates for the 
+two age groups (recruits and adults) at the time of each survey.
+
+```{r, echo=TRUE, eval=TRUE}
+  length(indices.ane)
+  names(indices.ane)  
+  lapply(indices.ane, index)
+```
+
+Besides the index slot, it is important to specify the timing of each index within the range slot of each FLIndex. In this case, both surveys are assumed to occur simultaneously at mid-May, so the start and end dates of the surveys (startf and endf) are taken equal to the fraction of the year until that date, (i.e. 5.5/12=0.375). When the start and end date of the tuning series are different, the survey is assumed to occur at the middle of the start and end dates.
+
+```{r, echo=TRUE, eval=TRUE}
+  lapply(indices.ane, range)
+```
+
+The timing of each of the surveys is important as it will define the number of periods within the year. The function ```periods``` returns a list with the number of periods (nper), the fraction of the year corresponding to each period (f) and a vector indicating the beginning of which period corresponds to each index:       
+
+```{r, echo=TRUE, eval=TRUE}
+  per <- periods(indices.ane)
+  per 
+```
+
+We can plot the total biomass from each index: 
+
+```{r, echo=TRUE, eval=TRUE, fig.show='hold'}
+  par(mfrow=c(1,2))
+  plot(quantSums(index(indices.ane[[1]])), type="o", ylab="Total biomass (t)", main=names(indices.ane)[1]) 
+  plot(quantSums(index(indices.ane[[2]])), type="o", ylab="Total biomass (t)", main=names(indices.ane)[2]) 
+```
+
+And the age 1 biomass proportion from each index: 
+
+```{r, echo=TRUE, eval=TRUE, fig.show='hold'}
+  par(mfrow=c(1,2))
+  plot(index(indices.ane[[1]])[1,,,,,]/quantSums(index(indices.ane[[1]])), type="o", ylab="Biomass proportion", main=names(indices.ane)[1]) 
+  plot(index(indices.ane[[2]])[1,,,,,]/quantSums(index(indices.ane[[2]])), type="o", ylab="Biomass proportion", main=names(indices.ane)[2]) 
+```
+
+
+The ```control.ane``` object is of class BBMcontrol. 
+
+```{r, echo=TRUE, eval=TRUE}
+class(control.ane)
+```
+
+It has two slots: g and param.fix.  
+
+```{r, echo=TRUE, eval=TRUE}
+slotNames(control.ane)
+```
+
+The slot g is a named vector that specifies the instantaneous rate of biomass decrease for each age class, which is the difference between the annual intrinsic growth and the natural mortality rates. In @bbm_Ibaibarriaga2008 the instantaneous biomass decrease was assumed to be age and time invariant and equal to 0.68.
+
+```{r, echo=TRUE, eval=TRUE}
+control.ane@g
+```
+
+The second slot of the ```control.ane``` object is param.fix that is of class BBMpar, i.e. it contains all the parameters to be estimated by the model. 
+
+```{r, echo=TRUE, eval=TRUE}
+class(control.ane@param.fix)
+```
+
+Within each element of the the param.fix slot each element takes the value 0 if the parameter has to be estimated and takes the value 1 if the parameter is fixed to the initial value. In this first example all the parameters are estimated. Other variants will be illustrated later. 
+
+```{r, echo=TRUE, eval=TRUE}
+control.ane@param.fix
+```
+
+In other words, there are no fixed elements: 
+
+```{r, echo=TRUE, eval=TRUE}
+sum(unlist(control.ane@param.fix)==0) # number of fixed parameters
+```
+
+The ```inits.ane``` object is of class BBMpar and it contains all the parameters to be estimated by the model. 
+
+```{r, echo=TRUE, eval=TRUE}
+class(inits.ane)
+inits.ane
+```
+
+The initial parameters should provide biomasses large enough to support the level of observed  catches. Given the instantaneous annual biomass decrease rates, the fraction of the year corresponding to each period, an FLQuant for the catches and an object of the class BBMpar, the function ```calcPop``` calculates the resulting biomasses and checks that the resulting biomasses by age group are positive. 
+
+```{r, echo=TRUE, eval=TRUE}
+out <- calcPop(g=control.ane@g, f=per$f, catch=catch.ane, inits=inits.ane)
+out$ok
+out$stock
+```
+
+The initial values for the optimization could be set by hand (as in this case) or calculated automatically using the function initsBBM in the package as we will show later. If the optimization works properly the results should be independent of the initial values of the optimization. 
+
+Given ```catch.ane```, ```indices.ane```, ```control.ane``` and ```inits.ane```, the model is fitted simply by:
+
+```{r, echo=TRUE, eval=TRUE}
+  run <- BBM(catch.ane, indices.ane, control.ane, inits.ane)
+```
+
+The output object is of class BBMfit.
+
+```{r, echo=TRUE, eval=TRUE}
+  class(run)
+```
+
+And it has the following slots:
+
+```{r, echo=TRUE, eval=TRUE}
+  slotNames(run)
+```
+
+The convergence should be checked in:
+
+```{r, echo=TRUE, eval=TRUE}
+  run@convergence
+```
+
+The fitted model parameters and their corresponding standard errors can be extracted as:
+
+```{r, echo=TRUE, eval=TRUE}
+  run@params
+  run@params.se
+```
+
+The AIC and BIC from the fitted object can be obtained by:
+
+```{r, echo=TRUE, eval=TRUE}
+  AIC(run)
+  BIC(run)
+```
+
+The Pearson residuals can be obtained by:
+
+```{r, echo=TRUE, eval=TRUE}
+  res <- residuals(run)
+```
+
+Then, we can plot the residuals to check that there are no patterns:
+
+```{r, echo=TRUE, eval=TRUE, fig.show='hold'}
+  par(mfrow=c(2,2))
+  plot(res$residuals.Btot$depm, type="p", ylab="Residuals Btot", main=names(indices.ane)[1]) 
+  plot(res$residuals.Btot$acoustic, type="p", ylab="Residuals Btot", main=names(indices.ane)[2]) 
+  plot(res$residuals.P$depm, type="p", ylab="Residuals P", main=names(indices.ane)[1]) 
+  plot(res$residuals.P$acoustic, type="p", ylab="Residuals P", main=names(indices.ane)[2]) 
+```
+
+# Starting from different initial values
+
+We can create our own initial values as follows:
+
+```{r, echo=TRUE, eval=TRUE}
+inits.ane2 <- new("BBMpar")
+
+inits.ane2@logq    <- c(log(0.6), log(0.6))
+inits.ane2@logpsi  <- c(log(100), log(100))
+inits.ane2@xi      <- c(3, 3)
+inits.ane2@logB0   <- log(60000)
+inits.ane2@logR    <- rep(log(40000), n)
+inits.ane2@mur     <- 10
+inits.ane2@logpsir <- log(2)
+inits.ane2
+```
+
+Or use the function ```initsBBM``` to automatically generate them from the data:
+
+```{r, echo=TRUE, eval=TRUE}
+inits.ane3 <- initsBBM(object=catch.ane, indices=indices.ane, g=control.ane@g)
+inits.ane3
+```
+
+Then, we fit the model starting from different initial values:
+
+```{r, echo=TRUE, eval=TRUE, results="hide"}
+  run1 <- BBM(catch.ane, indices=indices.ane, control=control.ane, inits=inits.ane)
+  run2 <- BBM(catch.ane, indices=indices.ane, control=control.ane, inits=inits.ane2)
+  run3 <- BBM(catch.ane, indices=indices.ane, control=control.ane, inits=inits.ane3)
+```
+
+We compare the fitted objects:
+
+```{r, echo=TRUE, eval=TRUE}
+  run1@params
+  run2@params
+  run3@params
+```
+
+```{r, echo=TRUE, eval=TRUE}
+matplot(cbind(run1@params@logR, run2@params@logR, run3@params@logR), type="l")
+```
+
+# Fixing some parameters
+
+```{r, echo=TRUE, eval=TRUE}
+param.fix <- new("BBMpar") 
+param.fix@logq    <- c(1,0) 
+param.fix@logpsi  <- rep(0,2)
+param.fix@xi      <- rep(0,2) 
+param.fix@logB0   <- 0
+param.fix@logR    <- rep(0,n)
+param.fix@mur     <- 0
+param.fix@logpsir <- 0
+
+control.ane2 <- BBM.control(g=c(rec=0.68, adult=0.68), param.fix=param.fix)
+```
+
+```{r, echo=TRUE, eval=TRUE, results="hide"}
+  run4 <- BBM(object=catch.ane, indices=indices.ane, control=control.ane2, inits=inits.ane)
+```
+
+The estimated parameters and their corresponding standard errors are: 
+
+```{r, echo=TRUE, eval=TRUE}
+  run4@params
+  run4@params.se
+```
+
+# More information
+
+* You can submit bug reports, questions or suggestions on `bbm` at the `bbm` issue page ^[<https://github.com/flr/bbm/issues>], or on the *FLR* mailing list.
+* Or send a pull request to <https://github.com/flr/FLPKG/>
+* For more information on the FLR Project for Quantitative Fisheries Science in R, visit the FLR webpage ^[<http://flr-project.org>].
+* The latest version of `FLPKG` can always be installed using the `devtools` package, by calling
+```{r, echo=TRUE, eval=FALSE}
+	library(devtools)
+	#install_github('flr/bbm')
+```
+
+
+## Software Versions
+
+* `r version$version.string`
+* FLCore: `r packageVersion('FLCore')`
+* bbm: `r # packageVersion('bbm')`
+* **Compiled**: `r date()`
+
+
+## Authors information
+
+**Leire Ibaibarriaga**. AZTI-Tecnalia. Txatxarramendi Ugartea z/g, E-48395 Sukarrieta (Bizkaia) Spain.
+
+**Sonia Sanchez**. AZTI-Tecnalia. Herrera Kaia Portualdea z/g, E-20110 Pasaia (Gipuzkoa) Spain.
+
+
+
+# References
+

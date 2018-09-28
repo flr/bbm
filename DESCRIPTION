@@ -1,0 +1,41 @@
+Package: bbm
+Title: FLR Implementation of a Two-Stage Stock Assessment Model
+Version: 0.0.1
+Authors@R: c(
+  person(given = "Leire", family = "Ibaibarriaga", role = c("cre", "aut"),
+    email = "libaibarriaga@azti.es"),
+  person(given = "Sonia", family = "Sanchez", role = c("aut"),
+  email = "ssanchez@azti.es"))
+Description: The two-stage biomass-based model for the Bay of Biscay anchovy (Ibaibarriaga et al., 2008).
+Depends:
+  R(>= 3.4.0),
+  methods,
+  FLCore
+Imports:
+  TMB,
+  stats
+LinkingTo: TMB, RcppEigen
+Additional_repositories: http://flr-project.org/R
+Suggests:
+  testthat,
+  knitr,
+  rmarkdown,
+  ggplotFL
+VignetteBuilder: knitr
+License: EUPL
+LazyLoad: Yes
+LazyData: No
+Roxygen: list(markdown = TRUE)
+BugReports: https://fishreg.jrc.ec.europa.eu/gitlab/mosquia/bbm/issues
+Collate:
+  "generics.R"
+  "BBMpar.R"
+  "BBMctrl.R"
+  "BBMfit.R"
+  "BBMass.R"
+  "calcPop.R"
+  "initsBBM.R"
+  "simBBM.R"
+  "functions_auxiliary.R"
+Encoding: UTF-8
+RoxygenNote: 6.1.0
