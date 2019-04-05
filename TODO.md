@@ -21,3 +21,10 @@ sfit <- tmbstan(model, chains=1, debug=TRUE, iter=50000, thin=100, warmup=1000)
 pairs(sfit, pars=names(model$par)[1:5])
 traceplot(sfit, pars=names(model$par), inc_warmup=FALSE)
 ```
+
+```{r}
+
+FLPar(logq.rec=NA, logq.ad=NA, logpsi.rec=NA, logpsi.ad=NA,
+  xi.rec=NA, xi.ad=NA, logB0=NA, mur=NA, logpsir=NA)
+
+```

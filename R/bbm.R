@@ -54,51 +54,50 @@
 #' }
 #' 
 
+load("../data/ane.RData")
+catch <- catch.ane
+indices <- lapply(indices.ane, index)
+indices <- indices.ane
+control <- control.ane
+inits <- inits.ane
 
-BBM <-  function( object, indices, control, inits) {
-  
+
+setMethod("bbm", signature(object="FLQuant", indices="FLIndices"),
+  function(catch, indices, control, inits) {
+
   # DATA CHECKS
-  check <- BBM.checks( object, indices, control, inits)
+  # check <- BBM.checks( object, indices, control, inits)
   
-  # DATA
+  # TODO Check that there are no NA's in catch
+  if (any(is.na(catch))){
+    stop("NA's not allowed in catch")
+  }
   
+  # SET timing
   aux <- periods(indices)
   nper <- aux$nper
   f    <- aux$f
   indexper <- aux$indexper
   
-  # - catch
-  catch <- object
-  rm(object)
-  
-  nyear <- dim(catch)[2] # number of years
-  
-  # Check that there are no NA's in catch
-  if (any(is.na(catch))){
-    stop("NA's not allowed in catch")
-  }
-  
+  # DIMENSIONS and NAMES
+  dm <- dim(catch)
   yrs <- dimnames(catch)$year
-  
-  if (dim(catch)[4]==1 & nper>1)  { # extend to the adequate number of seasons
-    catch <- expand( catch, season=1:nper)
-    for (s in nper:1)
-      catch[,,,s,,] <- catch[,,,1,,] * f[s]
-  }
-  # apply( catch, c(1:2), sum) - object #! CHECK
-  
-  # - indices
   idxs   <- names(indices)
   nindex <- length(indices)
   
+  # EXTEND catch to no. seasons
+  if (dm[4] == 1 & nper > 1)  {
+    catch <- expand(catch, season=1:nper)
+    catch[,,,nper:1,,] <- catch[,,,1,,] * f[s]
+  }
+
   # - control parameters
   g <- control@g
   param.fix <- control@param.fix
   
   # DATA transformation for input
-  
-  Crec <- catch[1,1:nyear,1,1:nper,1, 1, drop=T]  # recruits catch
-  Cadu <- catch[2,1:nyear,1,1:nper,1, 1, drop=T]  # adults catch
+  Crec <- catch[1, seq(1, dm[2]),, 1:nper,,, drop=T]  # recruits catch
+  Cadu <- catch[2, seq(1, dm[2]),, 1:nper,,, drop=T]  # adults catch
 
   Bobs    <- NULL
   idxBobs <- NULL
@@ -118,28 +117,21 @@ BBM <-  function( object, indices, control, inits) {
   }
   
   # create index
-  
   dat <- list(grec=g['rec'], gadu=g['adult'], 
-              nindex=nindex, 
-              Crec=Crec, Cadu=Cadu,
-              Bobs=Bobs, Pobs=Pobs,
-              idxBobs=idxBobs, idxPobs=idxPobs,
-              indexper = indexper,
-              f = as.double(f))
-  
-  # DATA end
-  
+    nindex=nindex, 
+    Crec=Crec, Cadu=Cadu,
+    Bobs=Bobs, Pobs=Pobs,
+    idxBobs=idxBobs, idxPobs=idxPobs,
+    indexper = indexper,
+    f = as.double(f))
   
   # INITIAL PARAMETERS
-  
   inits <- as.list(inits)
-
   
   # MODEL
   
   # model definition
-  
-  if (sum(unlist(as.list(param.fix)))==0) {
+  if (sum(unlist(as.list(param.fix))) == 0) {
     model <- MakeADFun(dat, inits, DLL="bbm")
   } else {
     map <- list()
@@ -147,14 +139,16 @@ BBM <-  function( object, indices, control, inits) {
       if(sum(slot( param.fix, sl))>0) 
         map[[sl]] <- slot( param.fix, sl)
     }
-    map <- lapply( map, function(x) {x[x==1] <- NA; return(as.factor(x))})
+    map <- lapply( map, function(x) {
+      x[x==1] <- NA
+      return(as.factor(x))
+    })
     model <- MakeADFun(dat, inits, DLL="bbm", map=map)
   }
-  browser()
+
   model$hessian <- TRUE
   
   # model fit: minimise the negative log-likelihood (nll)
-  
   fit <- optim(model$par, model$fn, model$gr, control=list(maxit=1e+9))
   
   rep   <- summary(sdreport(model))
@@ -168,7 +162,7 @@ BBM <-  function( object, indices, control, inits) {
   
   # parameter estimates
   
-  params <- new("BBMpar")
+  browser()
   
   for (sl in slotNames(param.fix)[!slotNames(param.fix) %in% ".Data"]) {
     slot(params, sl) <- slot( param.fix, sl)
@@ -194,7 +188,7 @@ BBM <-  function( object, indices, control, inits) {
   }
   
   # compute biomasses (this part can be moved to a function)
-  stock.fit <- calcPop( g=g, f=f, catch=catch, inits=params)
+  stock.fit <- calcPop( g=g, f=f, catch=object, inits=params)
   
   if (stock.fit$ok == FALSE)
     stop("Returned parameter estimates lead to negative biomassess.")
@@ -204,7 +198,7 @@ BBM <-  function( object, indices, control, inits) {
   
   # OUTPUT
   
-  out <- BBMfit(stock.bio=stock.bio) # estimated biomass
+  out <- bbmFit(stock.bio=stock.bio) # estimated biomass
   
   # - parameters and their se
   out@params       <- params
@@ -236,7 +230,7 @@ BBM <-  function( object, indices, control, inits) {
     
   return(out)
 
-}  # }}}
+})  # }}}
 
 # BBM.checks {{{
 BBM.checks <- function( object, indices, control=NULL, inits=NULL) {

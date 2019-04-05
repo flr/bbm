@@ -13,7 +13,6 @@
 #
 # Distributed under the terms of the European Union Public Licence (EUPL) V.1.1.
 
-
 # periods {{{
 periods <- function(indices) {
   
@@ -38,7 +37,6 @@ periods <- function(indices) {
 }
 # }}} end periods
 
-
 # AllEqual {{{
 AllEqual <- function(x) { ### numeric, character vector, or time series of type ts
   res <- FALSE
@@ -48,4 +46,3 @@ AllEqual <- function(x) { ### numeric, character vector, or time series of type 
   ### The function returns TRUE if all values are equal and FALSE if it contains different values.
 }
 # }}} end AllEqual
-
