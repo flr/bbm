@@ -1,15 +1,9 @@
-#-------------------------------------------------------------------------------  
-# auxiliary functions:
-# 
-# Created: Sonia Sanchez - 2018-05-29 12:09:38
-# Changed: 
-#------------------------------------------------------------------------------- 
+# functions_auxiliary.R: auxiliary functions required by the main functions
+# bbm/R/functions_auxiliary.R
 
-# functions_auxiliary.r: auxiliary functions required by the main functions
-# bbm/R/functions_auxiliary.r
-
-# Copyright: European Union & AZTI, 2018
-# Author: Leire Ibaibarriaga & Sonia Sanchez (AZTI) (<libaibarriaga@azti.es>, <ssanchez@azti.es>)
+# Copyright: European Union, 2018
+# Authors: Leire Ibaibarriaga (AZTI), <libaibarriaga@azti.es>
+#          Sonia Sanchez (AZTI) <ssanchez@azti.es>
 #
 # Distributed under the terms of the European Union Public Licence (EUPL) V.1.1.
 

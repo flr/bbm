@@ -6,7 +6,6 @@
 #
 # Distributed under the terms of the European Union Public Licence (EUPL) V.1.1.
 
-
 # BBM {{{
 
 #' Function to simulate a two-stage biomass-based model.
@@ -132,7 +131,7 @@ setMethod("bbm", signature(object="FLQuant", indices="FLIndices"),
   
   # model definition
   if (sum(unlist(as.list(param.fix))) == 0) {
-    model <- MakeADFun(dat, inits, DLL="bbm")
+    model <- MakeADFun(dat, inits, DLL="bbm", silent=TRUE)
   } else {
     map <- list()
     for (sl in slotNames(param.fix)[!slotNames(param.fix) %in% ".Data"]) {

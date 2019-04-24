@@ -66,7 +66,7 @@
 #' data(ane)
 #' 
 #' # Run assessment (output is of class bbmFit)
-#' run <- BBM(catch.ane, indices=indices.ane, control=control.ane, inits=inits.ane)
+#' run <- bbm(catch.ane, indices=indices.ane, control=control.ane, inits=inits.ane)
 #' class(run)
 #' run
 #' 
@@ -102,15 +102,27 @@ setClass("bbmFit",
     params.se  = FLPar(logq.recruits=NA, logq.adults=NA, logpsi.recruits=NA,
       logpsi.adults=NA, xi.recruits=NA, xi.adults=NA,
       logB0=NA, mur=NA, logpsir=NA),
-    data        = list(),
+    data = list(),
     call = character(1),
     logLik = "logLik",
-    counts      = as.integer(NA),
+    counts = as.integer(NA),
     convergence = as.integer(NA),
-    message     = "",
-    info        = run.info(c("FLCore", "TMB", "bbm"))),
+    message = "",
+    info = run.info(c("FLCore", "TMB", "bbm"))),
   validity=function(object){
-    # params and parms.se have equal dimnames        
+   
+    # params dimnames 
+    pnames <- c("logq.recruits", "logq.adults", "logpsi.recruits",
+      "logpsi.adults", "xi.recruits", "xi.adults", "logB0", "mur",
+      "logpsir")
+
+    # params have right dimnames$params
+    if(!identical(dimnames(params(object))$params, pnames))
+      return(c("params must have the right dimnames: ", pnames))
+
+    # param.ses have right dimnames$params
+    if(!identical(dimnames(params.se(object))$params, pnames))
+      return(c("params.se must have the right dimnames: ", pnames))
 
     # Everything is fine
     return(TRUE)

@@ -21,9 +21,6 @@ Type objective_function<Type>::operator() ()
   DATA_IVECTOR(indexper);	// index of the time step of each survey	
   DATA_VECTOR(f);			// fraction of the year corresponding to each time step
 
-//  DATA_IVECTOR(idxpobs);
-//  DATA_IVECTOR(idxbobs);
-
   PARAMETER_VECTOR(logq);
   PARAMETER_VECTOR(logpsi);
   PARAMETER_VECTOR(xi);
@@ -76,13 +73,11 @@ Type objective_function<Type>::operator() ()
   
   for (int j=1; j<=nstep; j++){
 	pen=0; 
-//	Brec(0,j)=100000*grec;
 	Brec(0,j) = Brec(0,j-1)*exp(-grec*f(j-1)) - Crec(0, j-1)*exp(-grec*f(j-1)/2.0);
 	Brec(0,j) = posfun(Brec(0,j), eps, pen);
 	nll += pen;
 	
 	pen=0; 
-//    Badu(0,j) = 100000*gadu;
 	Badu(0,j) = Badu(0,j-1)*exp(-gadu*f(j-1)) - Cadu(0, j-1)*exp(-gadu*f(j-1)/2.0);
 	Badu(0,j) = posfun(Badu(0,j), eps, pen);
 	nll += pen;
@@ -100,13 +95,11 @@ Type objective_function<Type>::operator() ()
 	P(i,0) = Brec(i,0)/Btot(i,0);
 	for (int j=1; j<=nstep; j++){
 		pen=0; 
-		//Brec(i,j) = 100000;
 		Brec(i,j) = Brec(i,j-1)*exp(-grec*f(j-1)) - Crec(i, j-1)*exp(-grec*f(j-1)/Type(2.0));
 		Brec(i,j) = posfun(Brec(i,j), eps, pen);
 		nll += pen;
 		
 		pen=0; 
-		// Badu(i,j) = 100000;
 		Badu(i,j) = Badu(i,j-1)*exp(-gadu*f(j-1)) - Cadu(i, j-1)*exp(-gadu*f(j-1)/Type(2.0));
 		Badu(i,j) = posfun(Badu(i,j), eps, pen);
 		nll += pen;
