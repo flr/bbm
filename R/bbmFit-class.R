@@ -110,7 +110,7 @@ setClass("bbmFit",
     message = "",
     info = run.info(c("FLCore", "TMB", "bbm"))),
   validity=function(object){
-   
+  
     # params dimnames 
     pnames <- c("logq.recruits", "logq.adults", "logpsi.recruits",
       "logpsi.adults", "xi.recruits", "xi.adults", "logB0", "mur",
