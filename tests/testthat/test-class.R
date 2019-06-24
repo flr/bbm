@@ -1,10 +1,10 @@
 # test-class.R - DESC
-# FLPKG/tests/testthat/test-class.R
+# bbm/tests/testthat/test-class.R
 
-# Copyright %USER%, %YEAR%
+# Copyright: European Union, 2018
 # Author: %USER% <%EMAIL%>
 #
-# Distributed under the terms of the %LICENSE%
+# Distributed under the terms of the European Union Public Licence (EUPL) V.1.1.
 
 # CONTEXT
 context("")

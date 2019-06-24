@@ -3,38 +3,59 @@ useDynLib(bbm)
 import("methods")
 import("TMB")
 import("FLCore")
+import("ggplot2")
+import("ggplotFL")
+import("latticeExtra")
 importFrom("stats",
   "na.omit",
   "optim",
-  "rbeta")
+  "rbeta",
+  "as.formula",
+  "uniroot")
 
 export(
-  "BBMpar",
-  "BBM.control", 
-  "BBMfit",
-  "BBM", 
-  "initsBBM",
-  "simBBM",
+  # "bbmChecks",
+  # "prepareInput",
+  # "prepareFLPar",
+  "bbmFLPar",
+  # "getNamesFromParnames",
+  # "AllEqual",
   "periods",
-  "calcPop"
+  "calcPop",
+  "calcIndices"
 )
 
 exportMethods(
-  "BBMpar",
-  "as.list",
-  "BBM.control", 
-  "BBMfit",
-  "stock",
+  "bbmControl",
+  "g",
+  "param.fix",
+  "bbmFit",
+  "inputs", "convergence", "message", "fitSumm", 
+  #"params", 
+  "params.se", 
+  "vcov", 
+  "stock.bio", 
+  "indicesB", 
+  "indicesP",
   "+", 
   "residuals",
+  "logLik",
   "AIC", 
   "BIC",
-  "BBM",
-  "initsBBM"
+  "iter",
+  "plot",
+  "bbmFitresiduals",
+  "residuals.B",
+  "residuals.P",
+  "plot",
+  "qqmath",
+  "bbm",
+  "simIndices",
+  "createInits"
 )
 
 exportClasses(
-  "BBMpar",
-  "BBM.control", 
-  "BBMfit" 
+  "bbmControl", 
+  "bbmFit",
+  "bbmFitresiduals"
 )

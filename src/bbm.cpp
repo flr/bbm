@@ -1,6 +1,7 @@
 #define TMB_LIB_INIT R_init_bbm
 #include <TMB.hpp>
 template<class Type>
+
 Type posfun(Type x, Type eps, Type &pen){
   pen += CppAD::CondExpLt(x,eps,Type(0.01)*pow(x-eps,2),Type(0));
   return CppAD::CondExpGe(x,eps,x,eps/(Type(2)-x/eps));
@@ -11,14 +12,16 @@ Type objective_function<Type>::operator() ()
 {
   DATA_SCALAR(grec);
   DATA_SCALAR(gadu);
-  DATA_INTEGER(nindex);		// number of surveys
   DATA_MATRIX(Crec);		// matrix of recruits catch with dimensions nyr x nstep
   DATA_MATRIX(Cadu);		// matrix of total catch with dimensions nyr x nstep
   DATA_VECTOR(Bobs);		// vector of observed total biomass
   DATA_VECTOR(Pobs);		// vector of observed recruit proportion 
-  DATA_IMATRIX(idxBobs);	// matrix 2 colums: survey and index of year
-  DATA_IMATRIX(idxPobs);	// matrix 2 colums: survey and index of year
-  DATA_IVECTOR(indexper);	// index of the time step of each survey	
+  DATA_IMATRIX(imatBobs);	// matrix 2 colums: survey and index of year
+  DATA_IMATRIX(imatPobs);	// matrix 2 colums: survey and index of year
+  //DATA_INTEGER(nindicesB);		// number of surveys for Bobs
+  //DATA_INTEGER(nindicesP);		// number of surveys for Pobs
+  DATA_IVECTOR(perindicesB);	// index of the time step of each Bobs survey	
+  DATA_IVECTOR(perindicesP);	// index of the time step of each Bobs survey	  
   DATA_VECTOR(f);			// fraction of the year corresponding to each time step
 
   PARAMETER_VECTOR(logq);
@@ -34,13 +37,13 @@ Type objective_function<Type>::operator() ()
   int nyr = Cadu.rows();
   int nstep = Cadu.cols();
  
-  vector<Type> q(nindex);
+  vector<Type> q;
   q = exp(logq);
-  vector<Type> psi(nindex);
+  vector<Type> psi;
   psi = exp(logpsi);
   Type B0 = exp(logB0);
   Type psir = exp(logpsir);
-  vector<Type> R(nyr);
+  vector<Type> R;
   R = exp(logR);
   
   matrix<Type> Brec(nyr, nstep+1);
@@ -51,12 +54,6 @@ Type objective_function<Type>::operator() ()
   vector<Type> Bpred(nbobs);
   vector<Type> Ppred(npobs);
 
-  ADREPORT(q);
-  ADREPORT(psi);
-  ADREPORT(B0);
-  ADREPORT(R);
-  ADREPORT(psir);  
-  
   Type nll;
   nll= 0.0;
 
@@ -112,24 +109,42 @@ Type objective_function<Type>::operator() ()
   // prediction for biomass observations
   
   for(int i=0; i<nbobs; ++i){
-	int locsurv = idxBobs(i,0);
-	int step = indexper(locsurv-1);
-	int locyear = idxBobs(i,1);	
-	Type val = Bobs(i);
-	nll -= dnorm(log(val), log(q(locsurv-1))+log(Btot(locyear-1, step-1)), Type(1.0)/sqrt(psi(locsurv-1)), true);	 
+	int locsurv = imatBobs(i,0);
+	int step = perindicesB(locsurv-1);
+	int locyear = imatBobs(i,1);
+    Bpred(i) =	q(locsurv-1) * Btot(locyear-1, step-1);
+	nll -= dnorm(log(Bobs(i)), log(Bpred(i)), Type(1.0)/sqrt(psi(locsurv-1)), true);	 
  }
   
   // prediction for biomass proportion observations
 
   for(int i=0; i<npobs; ++i){
-	int locsurv = idxPobs(i,0);
-	int step = indexper(locsurv-1);
-	int locyear = idxPobs(i,1);	
-	Type val = Pobs(i);
-	nll -= dbeta(val, exp(xi(locsurv-1))*P(locyear-1, step-1), exp(xi(locsurv-1))*(Type(1.0)-P(locyear-1, step-1)), true);
+	int locsurv = imatPobs(i,0);
+	int step = perindicesP(locsurv-1);
+	int locyear = imatPobs(i,1);	
+	Ppred(i) = P(locyear-1, step-1);
+	nll -= dbeta(Pobs(i), exp(xi(locsurv-1))*Ppred(i), exp(xi(locsurv-1))*(Type(1.0)-Ppred(i)), true);
  }
   // recruitment deviations
-  nll -= sum(dnorm(log(R), mur, Type(1.0)/sqrt(psir), true));	 
+  nll -= sum(dnorm(logR, mur, Type(1.0)/sqrt(psir), true));	 
+
+  ADREPORT(q);
+  ADREPORT(psi);
+  //ADREPORT(xi);
+  ADREPORT(B0);
+  ADREPORT(R);
+  ADREPORT(psir);  
+  
+  //ADREPORT(Brec.col(0));
+  //ADREPORT(Brec.col(1));
+  //ADREPORT(Brec.col(2));
+  //ADREPORT(Badu.col(0));
+  //ADREPORT(Badu.col(1));
+  //ADREPORT(Badu.col(2));
+  //ADREPORT(Badu.row(0));
+  
+  //ADREPORT(Bpred);
+  //ADREPORT(Ppred);
   
   return nll;
 }
