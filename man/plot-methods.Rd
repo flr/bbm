@@ -9,24 +9,17 @@
 \usage{
 \S4method{plot}{bbmFit,missing}(x, y, ...)
 
-\S4method{plot}{bbmFitresiduals,missing}(x, y = missing,
-  auxline = "smooth", ...)
+\S4method{plot}{bbmFitresiduals,missing}(x, y = missing, auxline = "smooth", ...)
 }
 \arguments{
-\item{x}{A \code{bbmFit} object with the fitted values and observed values.}
-
-\item{y}{Missing.}
-
-\item{...}{Additional argument list.}
-
-\item{auxline}{A string defining the type of line to be added, by default uses 'smooth',
-a common alternative is to use 'r', a regression, or leave it empty ''.}
-
 \item{x}{An \code{bbmFitresiduals} object with the Pearson residuals.}
 
 \item{y}{Ignored.}
 
 \item{...}{Additional argument list.}
+
+\item{auxline}{A string defining the type of line to be added, by default uses 'smooth',
+a common alternative is to use 'r', a regression, or leave it empty ''.}
 }
 \value{
 If \code{class(x)=='bbmFit'}, a \code{plot} with estimated abundances and one extra \code{plot} for each survey with fitted and observed indices.

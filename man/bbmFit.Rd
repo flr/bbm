@@ -28,8 +28,14 @@
 \usage{
 bbmFit(object, ...)
 
-\S4method{bbmFit}{missing}(object, years = "missing",
-  niter = "missing", namesB = "missing", namesP = "missing", ...)
+\S4method{bbmFit}{missing}(
+  object,
+  years = "missing",
+  niter = "missing",
+  namesB = "missing",
+  namesP = "missing",
+  ...
+)
 
 \S4method{+}{FLStock,bbmFit}(e1, e2)
 

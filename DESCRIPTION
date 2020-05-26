@@ -12,11 +12,9 @@ Depends:
   R(>= 3.4.0),
   methods,
   FLCore,
-  ggplotFL,
-  latticeExtra
+  ggplotFL
 Imports:
   TMB,
-  ggplot2,
   stats
 LinkingTo: TMB, RcppEigen
 Additional_repositories: http://flr-project.org/R
@@ -45,4 +43,4 @@ Collate:
     "functions_auxiliary.R"
 	  "BoBane_data.R"
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

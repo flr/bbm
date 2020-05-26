@@ -13,8 +13,6 @@ To install this package, start R and enter:
 
 	install.packages("bbm", repos="http:///flr-project.org/R")
 
-or download from the [bbm releases page](https://github.com/flr/bbm/releases/)
-
 ## Documentation
 - [Help pages](http://flr-project.org/bbm)
 - Vignette

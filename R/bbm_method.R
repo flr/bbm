@@ -49,33 +49,6 @@
 #' # Load data
 #' data(ane)
 
- 
-#' @rdname bbm
-#' @aliases bbm,FLQuant,FLQuants,FLQuants-method
-#' @examples
-#'
-#' # Case:  object='FLQuant'; indicesB=indicesP='FLQuants'; control='bbmControl'; inits='FLPar'
-#' 
-#' run <- bbm( catch.ane, 
-#'             indicesB=lapply( indicesB.ane, function(x) x@index), 
-#'             indicesP=lapply( indicesP.ane, function(x) x@index), 
-#'             findicesB=unlist(lapply( indicesB.ane, function(x) mean(range(x)[c('startf','endf')]))),
-#'             findicesP=unlist(lapply( indicesP.ane, function(x) mean(range(x)[c('startf','endf')]))),
-#'             control=control.ane, inits=inits.ane)
-#'             
-#' is(run)
-#' slotNames(run)
-#' 
-#' # Run the assessment with fixed parameters
-#' ctrl <- control.ane
-#' ctrl@param.fix['q_depm'] <- 1
-#' 
-#' run0 <- bbm(catch.ane, indicesB=indicesB.ane, indicesP=indicesP.ane, control=ctrl, inits=inits.ane)
-#' params(run0)['q_depm']; inits.ane['q_depm']
-#' params.se(run0)['q_depm']
-#' 
-
-# bbm(object='FLQuant', indicesB='FLQuants', indicesP='FLQuants',...) {{{
 setMethod('bbm', signature(object='FLQuant', indicesB='FLQuants', indicesP='FLQuants'),
           function(object, indicesB, indicesP, findicesB, findicesP, control, inits)
           {

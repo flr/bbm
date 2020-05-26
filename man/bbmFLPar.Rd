@@ -4,8 +4,7 @@
 \alias{bbmFLPar}
 \title{Function to generate an FLPar for bbm function}
 \usage{
-bbmFLPar(x = NULL, years, namesB, namesP, niter = 1,
-  logscale = FALSE)
+bbmFLPar(x = NULL, years, namesB, namesP, niter = 1, logscale = FALSE)
 }
 \arguments{
 \item{x}{Input numeric values for the parameters. If not set, then NA value is assigned.}

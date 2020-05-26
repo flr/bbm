@@ -3,9 +3,7 @@ useDynLib(bbm)
 import("methods")
 import("TMB")
 import("FLCore")
-import("ggplot2")
 import("ggplotFL")
-import("latticeExtra")
 importFrom("stats",
   "na.omit",
   "optim",
