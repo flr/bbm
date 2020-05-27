@@ -1,6 +1,6 @@
 # bbm
-- Version: 0.0.1
-- Date: 
+- Version: 0.0.3
+- Date: 2019-06-24
 - Author: Leire Ibaibarriaga and Sonia Sanchez
 - Maintainer: Leire Ibaibarriaga <libaibarriaga@azti.es> and Sonia Sanchez <ssanchez@azti.es>
 - Repository: <https://github.com/flr/bbm/>
@@ -12,8 +12,6 @@ bbm package provides a FLR version of an extension of the two-stage biomass-base
 To install this package, start R and enter:
 
 	install.packages("bbm", repos="http:///flr-project.org/R")
-
-or download from the [bbm releases page](https://github.com/flr/bbm/releases/)
 
 ## Documentation
 - [Help pages](http://flr-project.org/bbm)
@@ -32,7 +30,7 @@ or download from the [bbm releases page](https://github.com/flr/bbm/releases/)
 - [All release](https://github.com/flr/bbm/releases/)
 
 ## License
-Copyright (c) %YEAR% Somebody. Released under the [%LICENCE%](%LICENCEURL%).
+Copyright (c) European Union, 2018. Released under the [European Union Public Licence (EUPL) V.1.1.](http://ec.europa.eu/idabc/eupl.html).
 
 ## Contact
 You are welcome to:
