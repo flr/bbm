@@ -17,7 +17,6 @@ license: European Union Public Licence (EUPL) V.1.1.
 ```{r, pkgs, echo=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(collapse = T, comment = "#>", warning=FALSE)
 library(bbm)
-library(ggplot2)
 set.seed(987)
 # LOAD other packages, including bbm, here
 ```
@@ -300,7 +299,7 @@ Then, we can plot the residuals to check that there are no patterns:
 
 ```{r, echo=TRUE, eval=TRUE, fig.width = 8, fig.height = 5}
    plot(res) 
-   qqmath(res)
+   #qqmath(res)
 ```
 
 # Starting from different initial values

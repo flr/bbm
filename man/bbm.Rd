@@ -59,28 +59,16 @@ Function to fit a two-stage biomass-based model.
 }
 \examples{
 
-# Load required libraries
-library(bbm)
-
 # Load data
 data(ane)
-
 # Case:  object='FLStock'; indicesB=indicesP='FLIndices'; control='bbmControl'; inits='FLPar'
-
 stock <- FLStock(catch.n=catch.ane, catch.wt=catch.ane*0+1)
 units(stock@catch.wt) <- ''
 stock@catch <- quantSums(stock@catch.n*stock@catch.wt)
-
 run2 <- bbm(stock, indicesB=indicesB.ane, indicesP=indicesP.ane, control=control.ane, inits=inits.ane)
-
-
 # Case:  object='FLQuant'; indicesB=indicesP='FLIndices'; control='bbmControl'; inits='FLPar'
-
 run3 <- bbm(catch.ane, indicesB=indicesB.ane, indicesP=indicesP.ane, control=control.ane, inits=inits.ane) 
-
-
 # Case:  object='FLQuant'; indicesB=indicesP='FLQuant'; control='bbmControl'; inits='FLPar'
-
 namdel <- c("q_acoustic","psi_acoustic","xi_acoustic") # we will take only one of the indices --> need to delete the parameters related to other indices
 control <- control.ane
 control@param.fix <- control@param.fix[dimnames(control@param.fix)$params[!dimnames(control@param.fix)$params \%in\% namdel],]
@@ -89,15 +77,10 @@ run4 <- bbm( catch.ane, indicesB=indicesB.ane[[1]]@index, indicesP=indicesP.ane[
              findicesB=c( depm=(indicesB.ane[[1]]@range[['startf']]+indicesB.ane[[1]]@range[['endf']])/2), 
              findicesP=c( depm=(indicesP.ane[[1]]@range[['startf']]+indicesP.ane[[1]]@range[['endf']])/2), 
              control=control, inits=inits)
-
 # Plot assessed populations
-biomass <- FLQuants()
-runs <- c('run','run0','run2','run3','run4')
-names(runs) <- c('bc','fixed_qdepm','run2','run3','only_depm')
-for (i in 1:length(runs)) biomass[[i]] <- quantSums(stock.bio(get(runs[i])))
-names(biomass) <- names(runs)
+runs <- list(run2=run2, run3=run3, run4=run4)
+biomass <- FLQuants(lapply(lapply(runs, stock.bio), quantSums))
 plot( biomass)
-
 }
 \seealso{
 \link{bbmFit}, \linkS4class{FLQuant}, \linkS4class{FLQuants}, \linkS4class{bbmControl}, \linkS4class{FLPar}, \link{bbmFLPar}
