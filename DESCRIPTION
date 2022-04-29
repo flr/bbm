@@ -21,7 +21,8 @@ Additional_repositories: http://flr-project.org/R
 Suggests:
   testthat,
   knitr,
-  rmarkdown
+  rmarkdown,
+  latticeExtra
 VignetteBuilder: knitr
 License: EUPL
 LazyLoad: Yes
