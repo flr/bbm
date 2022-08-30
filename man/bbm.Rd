@@ -80,7 +80,7 @@ run4 <- bbm( catch.ane, indicesB=indicesB.ane[[1]]@index, indicesP=indicesP.ane[
 # Plot assessed populations
 runs <- list(run2=run2, run3=run3, run4=run4)
 biomass <- FLQuants(lapply(lapply(runs, stock.bio), quantSums))
-plot( biomass)
+plot(biomass)
 }
 \seealso{
 \link{bbmFit}, \linkS4class{FLQuant}, \linkS4class{FLQuants}, \linkS4class{bbmControl}, \linkS4class{FLPar}, \link{bbmFLPar}
