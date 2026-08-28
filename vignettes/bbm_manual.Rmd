@@ -25,10 +25,10 @@ set.seed(987)
 
 **bbm** is an open-source R package that provides an FLR implementation of the two-stage biomass-based model for the Bay of Biscay anchovy [@bbm_Ibaibarriaga2008]. This model describes the stock dynamics in terms of biomass and separates the population into two stages: recruits and adults. Thus, it has lower data demands than fully age-structured models, while it is able to track the main dynamics of the population with more detail than biomass dynamic models. Besides the application to the Bay of Biscay anchovy, similar models have been applied to other case studies [@Giannoulaki2014; @Gras2014; @Roel2000; @Roel2009].
 
-The implementation available in this package estimates the model parameters by maximum likelihood through the TMB package [@tmb_Kristensen2016]. Additionally, the model has been generalised for an unlimited number of indices that can occur at different times of the year. The package uses the S4 classes and methods developed by the **FLR** project [<http://flr-project.org/R>; @FLR_KellMG2007].
+The implementation available in this package estimates the model parameters by maximum likelihood through the TMB package [@tmb_Kristensen2016]. Additionally, the model has been generalised for an unlimited number of indices that can occur at different times of the year. The package uses the S4 classes and methods developed by the **FLR** project [<http://flrproject.org/R>; @FLR_KellMG2007].
 
 
-This document explains the basic use of the package **bbm**. The package and documentation are available at <http://flr-project.org/bbm>.
+This document explains the basic use of the package **bbm**. The package and documentation are available at <http://flrproject.org/bbm>.
 
 
 # Installation
@@ -37,13 +37,13 @@ The package requires the packages TMB and FLCore to be installed. TMB can be ins
 
 ```{r, echo=TRUE, eval=FALSE}
   install.packages('TMB')
-  install.packages(c("FLCore"), repos="http://flr-project.org/R")
+  install.packages(c("FLCore"), repos="http://flrproject.org/R")
 ```
 
-An stable version of **bbm** can be installed from the FLR repository (<http://flr-project.org/R>) with the command:
+An stable version of **bbm** can be installed from the FLR repository (<http://flrproject.org/R>) with the command:
 
 ```{r, echo=TRUE, eval=FALSE}
-  install.packages(c("bbm"), repos="http://flr-project.org/R")
+  install.packages(c("bbm"), repos="http://flrproject.org/R")
 ```
 
 A development version is available from GitHub repository (<https://github.com/flr/bbm/>).
@@ -493,7 +493,7 @@ qqmath(res)
 
 * You can submit bug reports, questions or suggestions on `bbm` at the `bbm` issue page ^[<https://github.com/flr/bbm/issues>], or on the *FLR* mailing list.
 * Or send a pull request to <https://github.com/flr/bbm/>
-* For more information on the FLR Project for Quantitative Fisheries Science in R, visit the FLR webpage ^[<http://flr-project.org>].
+* For more information on the FLR Project for Quantitative Fisheries Science in R, visit the FLR webpage ^[<http://flrproject.org>].
 * The latest version of `bbm` can always be installed using the `devtools` package, by calling
 ```{r, echo=TRUE, eval=FALSE}
 	library(devtools)

@@ -16,7 +16,7 @@ Imports:
   TMB,
   stats
 LinkingTo: TMB, RcppEigen
-Additional_repositories: http://flr-project.org/R
+Additional_repositories: http://flrproject.org/R
 Suggests:
   testthat,
   knitr,

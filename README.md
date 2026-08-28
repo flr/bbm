@@ -11,10 +11,10 @@ bbm package provides a FLR version of an extension of the two-stage biomass-base
 
 To install this package, start R and enter:
 
-	install.packages("bbm", repos="http:///flr-project.org/R")
+	install.packages("bbm", repos="http:///flrproject.org/R")
 
 ## Documentation
-- [Help pages](http://flr-project.org/bbm)
+- [Help pages](http://flrproject.org/bbm)
 - Vignette
 
 ## Bibliography
@@ -37,4 +37,4 @@ You are welcome to:
 
 - Submit suggestions and bug-reports at: <https://github.com/flr/bbm/issues>
 - Send a pull request on: <https://github.com/flr/bbm/>
-- Compose a friendly e-mail to: <flrteam@flr-project.org>
+- Compose a friendly e-mail to: <flrteam@flrproject.org>
